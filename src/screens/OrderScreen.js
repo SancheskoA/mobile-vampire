@@ -26,6 +26,7 @@ const OrderScreen = (props) => {
 
     const [people, setPeople] = useState('');
 
+    const [review, setReview] = useState('');
 
     const cancel = async () => {
         try {
@@ -107,28 +108,46 @@ const OrderScreen = (props) => {
         }
     }
 
+    const leaveFeedback = async () => {
+        try {
+            const {data} = await axios.put(DOMEN_SERVER + `/api/requests/${order.id}/review`, {
+                review
+            });
+            navigation.navigate('OrderScreen', {user, order: data}) //
+        } catch (error) {
+            Alert.alert('Ошибка', JSON.stringify(error), [
+            {text: 'OK', onPress: () => console.log('OK Pressed')},
+            ]);
+        }
+    }
+
 
     return (
         <ScrollView
             style={styles.container}
             contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center'}}
         >
+            <Text style={{color:'#A9A9A9', fontSize:28, marginTop: 20}} >{"Номер заказа " + order.id}</Text>
             <Text style={{color:'#000000', fontSize:36, marginBottom: 20, fontWeight:"bold", marginTop:20}}>{type[order.type]}</Text>
             <Text style={{color:'#8B0000', fontSize:28, fontWeight:"bold",}}>Статус:</Text>
             <Text style={{color:'#000000', fontSize:28, marginBottom: 20,fontWeight:"bold",}}>{order.status}</Text>
             <Text style={{color:'#8B0000', fontSize:28, fontWeight:"bold",}}>Место:</Text>
-            <Text style={{color:'#000000', fontSize:28, marginBottom: 20, fontWeight:"bold",}}>{order.map_point}</Text>
+            <Text style={{color:'#000000', fontSize:28, marginBottom: 20, fontWeight:"bold",}}>{order.mapPoint}</Text>
             <Text style={{color:'#8B0000', fontSize:28, fontWeight:"bold",}}>Комментарий:</Text>
             <Text style={{color:'#000000', fontSize:28, marginBottom: 20, fontWeight:"bold",}}>{order.comment}</Text>
             {order.people && <>
                 <Text style={{color:'#8B0000', fontSize:28, fontWeight:"bold",}}>Человек:</Text>
                 <Text style={{color:'#000000', fontSize:28, fontWeight:"bold",}}>{order.people}</Text>
             </>}
+            {order.review && <>
+                <Text style={{color:'#8B0000', fontSize:28, fontWeight:"bold",}}>Отзыв:</Text>
+                <Text style={{color:'#000000', fontSize:28, fontWeight:"bold",}}>{order.review}</Text>
+            </>}
 
             {
                 user.role != 'familiar' && (order.status == STATUS.СOURIER || order.status == STATUS.RESIDENT_FOUND) && 
                 <TouchableOpacity style={styles.btn} onPress={done}>
-                    <Text style={styles.btnText}>Подтвердить выполнение заказа</Text>
+                    <Text style={styles.btnText}>Заказ выполнен</Text>
                 </TouchableOpacity>
             }
 
@@ -175,7 +194,6 @@ const OrderScreen = (props) => {
                     <TextInput 
                         style={styles.textFieldComment} 
                         autoCapitalize='none'
-                        multiline={true}
                         placeholder={'Жертва'}
                         onChangeText={(people) => setPeople(people)} 
                         value={people}
@@ -195,6 +213,28 @@ const OrderScreen = (props) => {
                     <Text style={styles.btnText}>Отказаться</Text>
                 </TouchableOpacity>
             } 
+
+            {
+                user.role != 'familiar' && order.status == STATUS.DONE && !order.review &&
+                <>
+                    <View style={styles.inputContainer}>
+                    <Text style={styles.headField}>Отзыв</Text>
+                    <TextInput 
+                        style={styles.textFieldComment} 
+                        autoCapitalize='none'
+                        placeholder={'Отзыв'}
+                        onChangeText={(review) => setReview(review)} 
+                        value={review}
+                    />
+                    </View>
+                    <TouchableOpacity
+                        style={styles.btn}
+                        onPress={leaveFeedback}>
+                        <Text style={styles.btnText}>Оставить отзыв</Text>
+                    </TouchableOpacity>
+                </>
+
+            }
 
             <TouchableOpacity
                 style={styles.btn}
@@ -235,7 +275,7 @@ const styles = StyleSheet.create({
     },
     textFieldComment: {
         backgroundColor:"#fff0e1",
-        padding:"10%",
+        padding:"5%",
         borderRadius:6,
     },
     headField: {

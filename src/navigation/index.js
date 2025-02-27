@@ -10,7 +10,7 @@ import ProfileScreen from '../screens/ProfileScreen'
 import CreateOrderScreen from '../screens/CreateOrderScreen'
 import OrderScreen from '../screens/OrderScreen'
 import OrderListScreen from '../screens/OrderListScreen'
-
+import ChangePasswordScreen from '../screens/ChangePasswordScreen'
 
 
 const Stack = createNativeStackNavigator();
@@ -27,7 +27,7 @@ function AppNavigation() {
         <Stack.Screen name="CreateOrderScreen" component={CreateOrderScreen} />
         <Stack.Screen name="OrderScreen" component={OrderScreen} />
         <Stack.Screen name="OrderListScreen" component={OrderListScreen} />
-        
+        <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
       </Stack.Navigator> 
     </NavigationContainer>
   );

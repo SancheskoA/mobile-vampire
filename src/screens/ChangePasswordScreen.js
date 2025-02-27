@@ -5,32 +5,23 @@ import {DOMEN_SERVER} from '../config';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SignUp = () => {
+const ChangePasswordScreen = (props) => {
     const navigation = useNavigation();
-    const [code, setCode] = useState('');
-    const [login, setlogin] = useState('');
-    const [password, setPassword] = useState('');
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
+    let user = props.route.params;
 
-    const reg = async () => {
+    const changePassword = async () => {
         try {
-            const {data} = await axios.post(DOMEN_SERVER + "/api/auth/registration", {
-                code,
-                login,
-                password
+            console.log('1')
+
+            await axios.put(DOMEN_SERVER + "/api/auth/password?user_id=" + user.id, {
+                oldPassword,
+                newPassword
             })
             
-            
-            await AsyncStorage.setItem(
-                'token',
-                data.token
-            );
-
-            await AsyncStorage.setItem(
-                'user_id',
-                data.id
-            );
-            navigation.navigate('VampireMainScreen', data.user)
+            navigation.navigate('SignIn')
 
         } catch (error) {
             console.log(error.response.data.error)
@@ -41,54 +32,46 @@ const SignUp = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={{color:'#8B0000',fontSize:30,fontWeight:"bold",marginBottom:20}} >Регистрация</Text>
+            <Text style={{color:'#8B0000',fontSize:30,fontWeight:"bold",marginBottom:20}}>Сменить пароль</Text>
             <View style={styles.inputContainer}>
-                <Text style={styles.headField}>Код приглашения</Text>
-                <TextInput style={styles.textField} 
-                    placeholder={'Введите код'}
-                    autoCapitalize='none'
-                    onChangeText={(code) => setCode(code)} 
-                    value={code}
-                />
-            </View>
-            <View style={styles.inputContainer}>
-                <Text style={styles.headField}>Логин</Text>
+                <Text style={styles.headField}>Старый пароль</Text>
                 <TextInput 
                     style={styles.textField} 
                     autoCapitalize='none'
-                    placeholder={'Введите логин'}
-                    onChangeText={(login) => setlogin(login)} 
-                    value={login}
+                    placeholder={'Введите старый логин'}
+                    onChangeText={(oldPassword) => setOldPassword(oldPassword)} 
+                    value={oldPassword}
                 />
             </View>
             <View style={styles.inputContainer}>
-                <Text style={styles.headField} >Пароль</Text>
+                <Text style={styles.headField} >Новый пароль</Text>
                 <TextInput 
                     style={styles.textField} 
                     secureTextEntry={true} 
-                    placeholder={'Введите пароль'} 
-                    onChangeText={(password) => setPassword(password)}
-                    value={password}
+                    placeholder={'Введите новый пароль'} 
+                    onChangeText={(newPassword) => setNewPassword(newPassword)}
+                    value={newPassword}
                 />
             </View>
             <View style={styles.inputContainer}>
-                <Text style={styles.headField} >Пароль</Text>
+                <Text style={styles.headField} >Повторите пароль</Text>
                 <TextInput 
                     style={styles.textField} 
                     secureTextEntry={true} 
-                    placeholder={'Введите пароль еще раз'} 
+                    placeholder={'Введите новый пароль еще раз'} 
                     onChangeText={(repeatPassword) => setRepeatPassword(repeatPassword)}
                     value={repeatPassword}
                 />
             </View>
             <TouchableOpacity
                 style={styles.btn}
-                onPress={reg}>
-                <Text style={styles.btnText}>Создать аккаунт</Text>
+                onPress={changePassword}>
+                <Text style={styles.btnText}>Сменить пароль</Text>
             </TouchableOpacity>
-            <Text style={{color:"white",marginTop:10,fontWeight:"bold"}}>Есть аккаунт?</Text>
-            <TouchableOpacity>
-                <Text style={{color:'#8B0000'}} onPress={()=> navigation.navigate('SignIn')}>Войти</Text>
+            <TouchableOpacity
+                style={styles.btn}
+                onPress={()=> navigation.navigate('ProfileScreen', user)}>
+                <Text style={styles.btnText}>Назад</Text>
             </TouchableOpacity>
         </View>
     )
@@ -133,4 +116,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default SignUp
+export default ChangePasswordScreen

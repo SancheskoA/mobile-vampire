@@ -14,7 +14,7 @@ const ProfileScreen = (props) => {
     const history = async () => {
       try {
         const {data} = await axios.get(DOMEN_SERVER + "/api/requests/history?user_id=" + user.id)
-        navigation.navigate('OrderListScreen', {user, orders: data});
+        navigation.navigate('OrderListScreen', {user, orders: data, NameOrders: "История"});
       } catch (err) {
         Alert.alert('Ошибка', JSON.stringify(err.response));
       }
@@ -24,13 +24,13 @@ const ProfileScreen = (props) => {
 
     const stateVampire = async () => {
       try {
-
-          const {data} = await axios.get(DOMEN_SERVER + "/api/requests/active?user_id=" + user.id + "&type=meet")
-          if (data?.order) {
-              navigation.navigate('OrderScreen',{user, order: data.order});
-              return
-          }
-          navigation.navigate('CreateOrderScreen', {user, type: "Встреча с вампиром"});
+        console.log('stateVampire')
+        const {data: order} = await axios.get(DOMEN_SERVER + "/api/requests/active?user_id=" + user.id + "&type=meet")
+        if (order) {
+            navigation.navigate('OrderScreen',{user, order});
+            return
+        }
+        navigation.navigate('CreateOrderScreen', {user, type: "Встреча с вампиром", NameOrders: "История"});
       } catch (err) {
         Alert.alert('Ошибка', JSON.stringify(err));
       }
@@ -57,7 +57,7 @@ const ProfileScreen = (props) => {
               </>  
             }
             <Text style={{color:'#000000', fontSize:28, marginTop: 20, fontWeight:"bold",}}>Код приглашения:</Text>
-            <Text style={{color:'#000000', fontSize:28, fontWeight:"bold",}}>{user.invitation_code}</Text>
+            <Text style={{color:'#000000', fontSize:28, fontWeight:"bold",}}>{user.invitationCode}</Text>
             <TouchableOpacity
                 style={styles.btn}
                 onPress={history}>
@@ -65,7 +65,7 @@ const ProfileScreen = (props) => {
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.btn}
-                onPress={()=> navigation.navigate('SignUp')}>
+                onPress={()=> navigation.navigate('ChangePasswordScreen', user)}>
                 <Text style={styles.btnText}>Сменить пароль</Text>
             </TouchableOpacity>
             <TouchableOpacity

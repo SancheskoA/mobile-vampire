@@ -8,27 +8,36 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignIn = () => {
     const navigation = useNavigation();
-    const [login, setlogin] = useState('');
-    const [password, setPassword] = useState('');
+    let [login, setlogin] = useState('');
+    let [password, setPassword] = useState('');
 
     const auth = async () => {
         try {
+            
 
             const {data} = await axios.post(DOMEN_SERVER + "/api/auth", {
                 login, password
             })
-            
+
             await AsyncStorage.setItem(
                 'token',
                 data.token
             );
-                
+
+            await AsyncStorage.setItem(
+                'user_id',
+                data.user.id.toString()
+            );
+            console.log(2)
+
             navigation.navigate('VampireMainScreen', data.user)
             
 
         } catch (error) {
-            console.log(error);
-            Alert.alert('Ошибка', JSON.stringify(error.response.data.error));
+
+            Alert.alert('Ошибка', JSON.stringify(error.response.data), [
+                {text: 'OK', onPress: () => console.log('OK Pressed')},
+              ]);
         }
         
     }
@@ -66,6 +75,18 @@ const SignIn = () => {
             <Text style={{color:"white",marginTop:10,fontWeight:"bold"}}>Нет аккаунта?</Text>
             <TouchableOpacity>
                 <Text style={{color:'#8B0000'}} onPress={()=> navigation.navigate('SignUp')}>Создать новый аккаунт</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+                <Text style={{color:'#8B0000'}} onPress={()=> {
+                    setlogin("vampire")
+                    setPassword("test")
+                }}>vampire</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+                <Text style={{color:'#8B0000'}} onPress={()=> {
+                    setlogin("familiar")
+                    setPassword("test")
+                }}>familiar</Text>
             </TouchableOpacity>
         </View>
     )

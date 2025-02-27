@@ -13,12 +13,10 @@ const VampireMainScreen = (props) => {
     const getOrder = (type) => {
         return async () => {
             try {
+                const {data: order} = await axios.get(DOMEN_SERVER + "/api/requests/active?user_id=" + user.id + "&type=" + type)
 
-                const {data} = await axios.get(DOMEN_SERVER + "/api/requests/active?user_id=" + user.id + "&type=" + type)
-                
-
-                if (result?.order) {
-                    navigation.navigate('OrderScreen',{user, order: data.order});
+                if (order) {
+                    navigation.navigate('OrderScreen',{user, order});
                     return
                 }
                 
@@ -39,19 +37,32 @@ const VampireMainScreen = (props) => {
         
     const meets = async () => {
         try {
-            console.log("meets");
-            let order = await axios.get(DOMEN_SERVER + "/api/requests/active?user_id=" + user.id + "&type=meet").order
-
+            let {data: order} = await axios.get(DOMEN_SERVER + "/api/requests/active?user_id=" + user.id + "&type=meet")
             if (order) {
-                navigation.navigate('OrderScreen',{user, order});
+                navigation.navigate('OrderScreen', {user, order});
                 return
             }
-            let meets = await axios.get(DOMEN_SERVER + "/api/requests/meets?user_id=" + user.id).data
+
+            let {data: meets} = await axios.get(DOMEN_SERVER + "/api/requests/meets?user_id=" + user.id)
             console.log(meets);
 
-            navigation.navigate('OrderListScreen', {user, orders: meets ?? []});
+            navigation.navigate('OrderListScreen', {user, orders: meets ?? [], NameOrders: "Встречи"});
         } catch (err) {
           Alert.alert('Ошибка', JSON.stringify(err));
+        }
+    }
+
+    const profile = async () => {
+        try {
+            
+            const {data} = await axios.get(DOMEN_SERVER + "/api/auth/user/" + user.id)
+            navigation.navigate('ProfileScreen', data.user)
+            
+        } catch (error) {
+
+            Alert.alert('Ошибка', JSON.stringify(error.response.data), [
+                {text: 'OK', onPress: () => console.log('OK Pressed')},
+              ]);
         }
     }
         
@@ -79,7 +90,7 @@ const VampireMainScreen = (props) => {
             </>}
             <TouchableOpacity
                 style={styles.btn}
-                onPress={()=> navigation.navigate('ProfileScreen', user)}>
+                onPress={profile}>
                 <Text style={styles.btnText}>Профиль</Text>
             </TouchableOpacity>
         </View>

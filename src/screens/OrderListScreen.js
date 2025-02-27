@@ -13,7 +13,7 @@ const type = {
 
 const OrderListScreen = (props) => {
     const navigation = useNavigation();
-    const {user, orders} = props.route.params;
+    const {user, orders, NameOrders} = props.route.params;
 
 
     return (
@@ -21,11 +21,12 @@ const OrderListScreen = (props) => {
             backgroundColor= '#FFC0CB'
             contentContainerStyle={{ flexGrow: 1, alignItems: 'center', marginTop:20}}
         >
-            <Text style={{color:'#8B0000',fontSize:40,fontWeight:"bold",marginBottom:20}} >Заказы</Text>
+            <Text style={{color:'#8B0000',fontSize:40,fontWeight:"bold",marginBottom:20}} >{NameOrders ?? "Заказы"}</Text>
             {orders.map((order) => {
                 return <TouchableOpacity style = {styles.textFieldComment} key = {order.id} onPress={()=> navigation.navigate('OrderScreen', {user, order})}>
+                            <Text style={{color:'#8B0000'}} >{"Номер " + order.id}</Text>
                             <Text style={{color:'#8B0000',  fontSize: 20, fontWeight: "bold"}} >{type[order.type]}</Text>
-                            <Text style={{color:'#000000'}}>{order.map_point}</Text>
+                            <Text style={{color:'#000000'}}>{order.mapPoint}</Text>
                        </TouchableOpacity>
             })}
             <TouchableOpacity

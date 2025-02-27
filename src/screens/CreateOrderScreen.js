@@ -20,7 +20,7 @@ const CreateOrderScreen = (props) => {
     const reg = async () => {
         try {
             const {data} = await axios.post(DOMEN_SERVER + "/api/requests?user_id=" + user.id, {
-                map_point: address,
+                mapPoint: address,
                 type: TYPE[type],
                 comment
             })
@@ -48,7 +48,6 @@ const CreateOrderScreen = (props) => {
                 <TextInput 
                     style={styles.textFieldComment} 
                     autoCapitalize='none'
-                    multiline={true}
                     placeholder={'Комментарий к заказу'}
                     onChangeText={(comment) => setComment(comment)} 
                     value={comment}
